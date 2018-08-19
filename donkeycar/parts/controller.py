@@ -210,14 +210,14 @@ class PS4Joystick(Joystick):
         self.axis_names = {
             0x00 : 'left_stick_horz',
             0x01 : 'left_stick_vert',
-            0x02 : 'right_stick_horz',
-            0x05 : 'right_stick_vert',
+            0x03 : 'right_stick_horz',
+            0x04 : 'right_stick_vert',
             
-            0x03 : 'left_trigger_axis',
-            0x04 : 'right_trigger_axis',
+            0x02 : 'left_trigger_axis',
+            0x05 : 'right_trigger_axis',
             
-            0x10 : 'dpad_leftright',
-            0x11 : 'dpad_updown',
+            0x06 : 'dpad_leftright',
+            0x07 : 'dpad_updown',
 
             0x19 : 'tilt_a',
             0x1a : 'tilt_b',
@@ -230,21 +230,21 @@ class PS4Joystick(Joystick):
 
         self.button_names = {
 
-            0x130 : 'square',
-            0x131 : 'cross',
-            0x132 : 'circle',
+            0x134 : 'square', #3
+            0x130 : 'cross',
+            0x131 : 'circle',
             0x133 : 'triangle',
 
-            0x134 : 'L1',
-            0x135 : 'R1',
-            0x136 : 'L2',
-            0x137 : 'R2',
-            0x13a : 'L3',
-            0x13b : 'R3',
+            0x136 : 'L1',
+            0x137 : 'R1',
+            #0x136 : 'L2',
+            #0x137 : 'R2',
+            #0x13a : 'L3',
+            #0x13b : 'R3',
 
-            0x13d : 'pad',
-            0x138 : 'share',
-            0x139 : 'options',
+            #0x13d : 'pad',
+            0x13a : 'share',
+            0x13b : 'options',
             0x13c : 'PS',
         }
 
@@ -440,6 +440,8 @@ class JoystickController(object):
 
         while self.running:
             button, button_state, axis, axis_val = self.js.poll()
+            print ("Button: ", button)
+            print ("Button state: ", button_state)
 
             if axis is not None and axis in self.axis_trigger_map:
                 '''
@@ -463,12 +465,12 @@ class JoystickController(object):
 
     def set_steering(self, axis_val):
         self.angle = self.steering_scale * axis_val
-        #print("angle", self.angle)
+        print("angle", self.angle)
 
     def set_throttle(self, axis_val):
         #this value is often reversed, with positive value when pulling down
         self.throttle = (self.throttle_dir * axis_val * self.throttle_scale)
-        #print("throttle", self.throttle)
+        print("throttle", self.throttle)
         self.on_throttle_changes()
 
     def toggle_manual_recording(self):
@@ -691,14 +693,14 @@ class PS4JoystickController(JoystickController):
             'circle' : self.toggle_manual_recording,
             'triangle' : self.erase_last_N_records,
             'cross' : self.emergency_stop,
-            'L1' : self.increase_max_throttle,
-            'R1' : self.decrease_max_throttle,
+            'R1' : self.increase_max_throttle,
+            'L1' : self.decrease_max_throttle,
             'options' : self.toggle_constant_throttle,
         }
 
         self.axis_trigger_map = {
-            'left_stick_horz' : self.set_steering,
-            'right_stick_vert' : self.set_throttle,
+            'right_stick_horz' : self.set_steering,
+            'left_stick_vert' : self.set_throttle,
         }
 
 
