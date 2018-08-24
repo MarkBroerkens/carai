@@ -9,7 +9,7 @@ from donkeycar.parts.web_controller.web import LocalWebController
 
 class Joystick():
     """
-    An interface to a physical joystick available at /dev/input
+    An interface to a physical PS4 joystick available at /dev/input
     """
     access_url = None #required to be consistent with web controller
 
@@ -23,56 +23,33 @@ class Joystick():
 
         # These constants were borrowed from linux/input.h
         self.axis_names = {
-            0x00 : 'x',
-            0x01 : 'y',
-            0x02 : 'z',
+            0x00 : 'lx', #'x',
+            0x01 : 'ly', #'y',
+            0x02 : 'l2', #'z',
             0x03 : 'rx',
             0x04 : 'ry',
-            0x05 : 'rz',
-            0x06 : 'trottle',
-            0x07 : 'rudder',
-            0x08 : 'wheel',
-            0x09 : 'gas',
-            0x0a : 'brake',
-            0x10 : 'hat0x',
-            0x11 : 'hat0y',
-            0x12 : 'hat1x',
-            0x13 : 'hat1y',
-            0x14 : 'hat2x',
-            0x15 : 'hat2y',
-            0x16 : 'hat3x',
-            0x17 : 'hat3y',
-            0x18 : 'pressure',
-            0x19 : 'distance',
-            0x1a : 'tilt_x',
-            0x1b : 'tilt_y',
-            0x1c : 'tool_width',
-            0x20 : 'volume',
-            0x28 : 'misc',
+            0x05 : 'r2', #'rz',
+
+            0x10 : 'dpadx', #'hat0x',
+            0x11 : 'dpady', #'hat0y',
         }
 
         self.button_names = {
             0x130 : 'cross', #'a',
             0x131 : 'circle', #'b',
-            #0x132 : 'c',
+
             0x133 : 'triangle', #'x',
             0x134 : 'square', #y',
-            #0x135 : 'z',
+
             0x136 : 'l1', #'tl',
             0x137 : 'r1', #'tr',
-            #0x138 : 'tl2',
-            #0x139 : 'tr2',
+            0x138 : 'l2', #'tl2',
+            0x139 : 'r2', #'tr2',
             0x13a : 'share', #'select',
             0x13b : 'options', #'start',
             0x13c : 'ps', #'mode',
-            #0x13d : 'thumbl',
-            #0x13e : 'thumbr',
-
-            #0x220 : 'dpad_up',
-            #0x221 : 'dpad_down',
-            #0x222 : 'dpad_left',
-            #0x223 : 'dpad_right',
-
+            0x13d : 'thumbl',
+            0x13e : 'thumbr',
         }
 
 
@@ -176,8 +153,8 @@ class JoystickController(object):
 
     def __init__(self, poll_delay=0.0,
                  max_throttle=1.0,
-                 steering_axis='x',
-                 throttle_axis='rz',
+                 steering_axis='rx',
+                 throttle_axis='ly',
                  steering_scale=1.0,
                  throttle_scale=-1.0,
                  dev_fn='/dev/input/js0',
@@ -262,7 +239,35 @@ class JoystickController(object):
                 print("throttle", self.throttle)
                 self.on_throttle_changes()
 
-            if button == 'trigger' and button_state == 1:
+            if axis == 'dpadx':
+                """
+                update steering scale
+                """
+                if axis_val != 0:
+                    if axis_val > 0:
+                       steering_scale_delta = 0.05
+                    else:
+                       steering_scale_delta = -0.05
+
+                    self.steering_scale = round(min(0.0, self.steering_scale + steering_scale_delta), 2)
+                    print('steering_scale:', self.steering_scale)
+
+
+            if axis == 'dpady':
+                """
+                update throttle scale
+                """
+                if axis_val != 0:
+                    if axis_val < 0:
+                      throttle_scale_delta = 0.05
+                    else:
+                      throttle_scale_delta = -0.05
+
+                    self.throttle_scale = round(min(0.0, self.throttle_scale + throttle_scale_delta), 2)
+                    print('throttle_scale:', self.throttle_scale)
+
+
+            if button == 'option' and button_state == 1:
                 """
                 switch modes from:
                 user: human controlled steer and throttle
@@ -290,7 +295,7 @@ class JoystickController(object):
 
                 print('recording:', self.recording)
 
-            if button == 'triangle' and button_state == 1:
+            if button == 'r1' and button_state == 1:
                 """
                 increase max throttle setting
                 """
@@ -301,7 +306,7 @@ class JoystickController(object):
 
                 print('max_throttle:', self.max_throttle)
 
-            if button == 'cross' and button_state == 1:
+            if button == 'l1' and button_state == 1:
                 """
                 decrease max throttle setting
                 """
@@ -312,35 +317,21 @@ class JoystickController(object):
 
                 print('max_throttle:', self.max_throttle)
 
-            if button == 'base' and button_state == 1:
+            if button == 'r2' and button_state == 1:
                 """
                 increase throttle scale
                 """
                 self.throttle_scale = round(min(0.0, self.throttle_scale + 0.05), 2)
                 print('throttle_scale:', self.throttle_scale)
 
-            if button == 'top2' and button_state == 1:
+            if button == 'l2' and button_state == 1:
                 """
                 decrease throttle scale
                 """
                 self.throttle_scale = round(max(-1.0, self.throttle_scale - 0.05), 2)
                 print('throttle_scale:', self.throttle_scale)
 
-            if button == 'base2' and button_state == 1:
-                """
-                increase steering scale
-                """
-                self.steering_scale = round(min(1.0, self.steering_scale + 0.05), 2)
-                print('steering_scale:', self.steering_scale)
-
-            if button == 'pinkie' and button_state == 1:
-                """
-                decrease steering scale
-                """
-                self.steering_scale = round(max(0.0, self.steering_scale - 0.05), 2)
-                print('steering_scale:', self.steering_scale)
-
-            if button == 'top' and button_state == 1:
+            if button == 'triangle' and button_state == 1:
                 """
                 toggle constant throttle
                 """
