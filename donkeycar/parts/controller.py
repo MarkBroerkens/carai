@@ -52,51 +52,27 @@ class Joystick():
         }
 
         self.button_names = {
-            0x120 : 'trigger',
-            0x121 : 'thumb',
-            0x122 : 'thumb2',
-            0x123 : 'top',
-            0x124 : 'top2',
-            0x125 : 'pinkie',
-            0x126 : 'base',
-            0x127 : 'base2',
-            0x128 : 'base3',
-            0x129 : 'base4',
-            0x12a : 'base5',
-            0x12b : 'base6',
+            0x130 : 'cross', #'a',
+            0x131 : 'circle', #'b',
+            #0x132 : 'c',
+            0x133 : 'triangle', #'x',
+            0x134 : 'square', #y',
+            #0x135 : 'z',
+            0x136 : 'l1', #'tl',
+            0x137 : 'r1', #'tr',
+            #0x138 : 'tl2',
+            #0x139 : 'tr2',
+            0x13a : 'share', #'select',
+            0x13b : 'options', #'start',
+            0x13c : 'ps', #'mode',
+            #0x13d : 'thumbl',
+            #0x13e : 'thumbr',
 
-            #PS3 sixaxis specific
-            0x12c : "triangle",
-            0x12d : "circle",
-            0x12e : "cross",
-            0x12f : 'square',
+            #0x220 : 'dpad_up',
+            #0x221 : 'dpad_down',
+            #0x222 : 'dpad_left',
+            #0x223 : 'dpad_right',
 
-            0x130 : 'a',
-            0x131 : 'b',
-            0x132 : 'c',
-            0x133 : 'x',
-            0x134 : 'y',
-            0x135 : 'z',
-            0x136 : 'tl',
-            0x137 : 'tr',
-            0x138 : 'tl2',
-            0x139 : 'tr2',
-            0x13a : 'select',
-            0x13b : 'start',
-            0x13c : 'mode',
-            0x13d : 'thumbl',
-            0x13e : 'thumbr',
-
-            0x220 : 'dpad_up',
-            0x221 : 'dpad_down',
-            0x222 : 'dpad_left',
-            0x223 : 'dpad_right',
-
-            # XBox 360 controller uses these codes.
-            0x2c0 : 'dpad_left',
-            0x2c1 : 'dpad_right',
-            0x2c2 : 'dpad_up',
-            0x2c3 : 'dpad_down',
         }
 
 
@@ -184,6 +160,7 @@ class Joystick():
 
             if typev & 0x02:
                 axis = self.axis_map[number]
+                print(tval, value, typev, number, axis, 'axis moved')
                 if axis:
                     fvalue = value / 32767.0
                     self.axis_states[axis] = fvalue
