@@ -245,11 +245,10 @@ class JoystickController(object):
                 """
                 if axis_val != 0:
                     if axis_val > 0:
-                       steering_scale_delta = 0.05
+                       self.steering_scale = round(min(1.0, self.steering_scale + 0.05), 2)
                     else:
-                       steering_scale_delta = -0.05
+                       self.steering_scale = round(max(0.0, self.steering_scale - 0.05), 2)
 
-                    self.steering_scale = round(min(0.0, self.steering_scale + steering_scale_delta), 2)
                     print('steering_scale:', self.steering_scale)
 
 
@@ -259,11 +258,10 @@ class JoystickController(object):
                 """
                 if axis_val != 0:
                     if axis_val < 0:
-                      throttle_scale_delta = 0.05
+                      self.throttle_scale = round(max(-1.0, self.throttle_scale - 0.05), 2)
                     else:
-                      throttle_scale_delta = -0.05
+                      self.throttle_scale = round(min(0.0, self.throttle_scale + 0.05), 2)
 
-                    self.throttle_scale = round(min(0.0, self.throttle_scale + throttle_scale_delta), 2)
                     print('throttle_scale:', self.throttle_scale)
 
 
