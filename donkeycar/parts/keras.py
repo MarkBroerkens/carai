@@ -200,7 +200,7 @@ def marks_linear():
     img_in = Input(shape=(120, 160, 3), name='img_in')
     x = img_in
     x = Cropping2D(cropping=((42, 0), (0, 0)))(x)  # trim 40 pixels off top
-    x = Lambda(lambda x: x / 127.5 - 1.)(x)  # normalize and re-center
+    #x = Lambda(lambda x: x / 127.5 - 1.)(x)  # normalize and re-center
     x = Convolution2D(24, (5, 5), strides=(2, 2), activation='relu')(x)
     x = Convolution2D(32, (5, 5), strides=(2, 2), activation='relu')(x)
     x = Convolution2D(64, (5, 5), strides=(2, 2), activation='relu')(x)
@@ -239,7 +239,7 @@ def marks_nvidia_linear():
     img_in = Input(shape=(120, 160, 3), name='img_in')
     x = img_in
     x = Cropping2D(cropping=((42, 0), (0, 0)))(x)  # trim 40 pixels off top
-    x = Lambda(lambda x: x / 127.5 - 1.)(x)  # normalize and re-center
+    #x = Lambda(lambda x: x / 127.5 - 1.)(x)  # normalize and re-center
     x = Convolution2D(24, (5, 5), strides=(2, 2), activation='relu')(x)
     x = Convolution2D(36, (5, 5), strides=(2, 2), activation='relu')(x)
     x = Convolution2D(48, (5, 5), strides=(2, 2), activation='relu')(x)
